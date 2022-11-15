@@ -1,0 +1,25 @@
+name: Linux_Container_Notion_Sync_Workflow
+
+on:
+  pull_request:
+    types: [opened, edited, closed, reopened, review_requested, review_request_removed]
+  pull_request_review:
+    types: [submitted]
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+          architecture: x64
+      - name: Install dependencies
+        run: |
+          pip install poetry
+          poetry install
+      - name: pass event payload to main function
+        run: |
+          poetry run python main.py --event '${{ toJson(github.event) }}'
